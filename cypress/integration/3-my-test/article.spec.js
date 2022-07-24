@@ -3,7 +3,7 @@ context("Conduit -> New Article", ()=>{
         cy.visit('https://demo.productionready.io/#/login')
         cy.fixture("my.json").then((userInfo) => {
             cy.signIn(userInfo)
-            .checkSignIn(200)
+            .waitSignIn(200)
         })
         cy.visit("https://demo.productionready.io/#/editor/")
     })
@@ -23,5 +23,14 @@ context("Conduit -> New Article", ()=>{
 
         cy.checkHref('https://demo.productionready.io/#/editor/')
         cy.checkErrorMssg(/description can't be blank/)
+    })
+
+    it("Verify that you can't submit the article when the body is empty", ()=>{
+        cy.fillTitle('title')
+        cy.fillDescription('Description')
+        cy.sumbitArticle()
+
+        cy.checkHref('https://demo.productionready.io/#/editor/')
+        cy.checkErrorMssg(/body can't be blank/)
     })
 })

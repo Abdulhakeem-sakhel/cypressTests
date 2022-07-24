@@ -37,3 +37,26 @@ Cypress.Commands.add('checkErrorMssg',(error)=>{
     })
     
 })
+
+Cypress.Commands.add("waitSignIn",(status) =>{
+    cy.intercept({
+        pathname: '/api/users/login',
+        method: 'POST'
+    })
+    .as('signInHttp')
+
+    cy.wait('@signInHttp').its('response.statusCode').then(statusCode=>{
+        if(statusCode === status)
+        {
+            expect(statusCode).to.eq(status)
+        }
+        else if(statusCode === 307)
+        {
+            cy.wait('@signInHttp').its('response.statusCode').should('eq',status)
+        }
+        else {
+            throw new Error('an expected http request happend');
+        }
+    })
+    
+})
