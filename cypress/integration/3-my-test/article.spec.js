@@ -16,4 +16,12 @@ context("Conduit -> New Article", ()=>{
         cy.checkErrorMssg(/title can't be blank/)
     })
     
+    it("Verify that you can't submit the article when the description is empty", ()=>{
+        cy.fillTitle('title')
+        cy.fillBody('body')
+        cy.sumbitArticle()
+
+        cy.checkHref('https://demo.productionready.io/#/editor/')
+        cy.checkErrorMssg(/description can't be blank/)
+    })
 })

@@ -1,5 +1,5 @@
 Cypress.Commands.add('fillTitle',(title)=>{
-    cy.get('ng-model="$ctrl.article.title"')
+    cy.get('[ng-model="$ctrl.article.title"]')
     .clear()
     .type(title)
 })
