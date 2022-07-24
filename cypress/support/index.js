@@ -16,5 +16,6 @@
 // Import commands.js using ES2015 syntax:
 import './commands'
 import './signIn.commands'
+import './article'
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
