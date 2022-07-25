@@ -83,6 +83,40 @@ context("Conduit -> New Article", ()=>{
     
 })
 
+context('Conduit -> New Article priority 1',()=>{
+    beforeEach(()=>{
+        cy.visit('https://demo.productionready.io/#/login')
+        cy.fixture("my.json").then((userInfo) => {
+            cy.signIn(userInfo)
+            .waitSignIn(200)
+        })
+        cy.visit("https://demo.productionready.io/#/editor/")
+    })
+    it("Verify that you can't submit the article when all fields are empty", ()=> {
+        cy.sumbitArticle()
+
+        cy.checkHref('https://demo.productionready.io/#/editor/')
+        cy.checkErrorMssg("title can't be blank")
+    })
+    it('Add a new article even with a very long title',()=>{
+        const artical = {
+            title: genSentence(250),
+            description: genWord(15),
+            body: genWord(50),
+            tags: 'implementations'
+        }
+
+        cy.fillTitle(artical.title)
+        cy.fillDescription(artical.description)
+        cy.fillBody(artical.body)
+        cy.fillTags(artical.tags)
+        cy.sumbitArticle()
+
+        cy.checkArticlContent(artical)
+        cy.checkHref(`https://demo.productionready.io/#/article/${artical.title.split(' ').join('-')}`)
+    })
+})
+
 
 function genWord(length) {
     let chars = 'abcdefghijklmnopqrstuvwxyz1234567890';
