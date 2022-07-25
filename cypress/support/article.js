@@ -16,6 +16,12 @@ Cypress.Commands.add('fillBody',(body)=>{
     .type(body)
 })
 
+Cypress.Commands.add('fillTags',(tags) =>{
+    cy.get('[ng-model="$ctrl.tagField"]')
+    .clear()
+    .type(tags)
+})
+
 Cypress.Commands.add('sumbitArticle',()=>{
     cy.get('[ng-click="$ctrl.submit()"]')
     .click()
@@ -53,6 +59,20 @@ Cypress.Commands.add('checkArticlContent',(articalInfo) => {
     cy.fixture("my.json").then((userInfo)=>{
         cy.get('[ng-bind="$ctrl.article.author.username"]').first()
         .should('have.text',userInfo.name)
+    })
+})
+
+Cypress.Commands.add("getTitleName", ()=> {
+    cy.fixture('my.json').then(userInfo => {
+        cy.visit(`https://demo.productionready.io/#/@${userInfo.name}`)
+    })
+    cy.intercept({method: "GET",pathname: "/api/articles"}).as('author')
+    cy.wait('@author').then(http => {
+    })
+    cy.get('[ng-bind="$ctrl.article.title"]').first()
+    .then($elm =>{ 
+        cy.visit('https://demo.productionready.io/#/editor/')
+        .then(() => $elm.text())
     })
 })
 

@@ -13,7 +13,7 @@ context("Conduit -> New Article", ()=>{
         cy.sumbitArticle()
         
         cy.checkHref('https://demo.productionready.io/#/editor/')
-        cy.checkErrorMssg(/title can't be blank/)
+        cy.checkErrorMssg("title can't be blank")
     })
     
     it("Verify that you can't submit the article when the description is empty", ()=>{
@@ -50,6 +50,36 @@ context("Conduit -> New Article", ()=>{
         cy.checkHref(`https://demo.productionready.io/#/article/${artical.title.split(' ').join('-')}`)
     })
     
+    it("Add a new article with tags",()=>{
+        const artical = {
+            title: genSentence(3),
+            description: genWord(15),
+            body: genWord(50),
+            tags: 'implementations'
+        }
+
+        cy.fillTitle(artical.title)
+        cy.fillDescription(artical.description)
+        cy.fillBody(artical.body)
+        cy.fillTags(artical.tags)
+        cy.sumbitArticle()
+
+        cy.checkArticlContent(artical)
+        cy.checkHref(`https://demo.productionready.io/#/article/${artical.title.split(' ').join('-')}`)
+    })
+
+    it("Verify that you can't submit the article when the title is not unique", ()=> {
+        cy.getTitleName()
+        .then(text => {
+            cy.fillTitle(text)
+            cy.fillDescription(genWord(5))
+            cy.fillBody(genWord(5))
+            cy.sumbitArticle()
+
+            cy.checkHref('https://demo.productionready.io/#/editor/')
+            cy.checkErrorMssg("title must be unique")
+        })
+    })
     
 })
 
