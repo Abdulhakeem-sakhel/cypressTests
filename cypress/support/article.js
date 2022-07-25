@@ -23,12 +23,13 @@ Cypress.Commands.add('sumbitArticle',()=>{
 
 Cypress.Commands.add('checkHref',(href)=> {
     cy.location().then((location) => {
-        expect(location.href).to.eq(href)
+        expect(location.href).match(new RegExp(href))
     })
 })
 
 
 Cypress.Commands.add('checkErrorMssg',(error)=>{
+    error = new RegExp(error,"ig")
     cy.get('[ng-repeat="error in errors"]')
     .then($elm=>{
         expect($elm).to.be.visible
@@ -36,6 +37,23 @@ Cypress.Commands.add('checkErrorMssg',(error)=>{
         expect($elm.text()).match(error)
     })
     
+})
+
+Cypress.Commands.add('checkArticlContent',(articalInfo) => {
+    cy.get('[ng-bind="::$ctrl.article.title"]')
+    .then($elm =>{
+        expect($elm.text()).match(new RegExp(articalInfo.title))
+    })
+
+    cy.get('[ng-bind-html="::$ctrl.article.body"]')
+    .then($elm =>{
+        expect($elm.text()).match(new RegExp(articalInfo.body))
+    })
+
+    cy.fixture("my.json").then((userInfo)=>{
+        cy.get('[ng-bind="$ctrl.article.author.username"]').first()
+        .should('have.text',userInfo.name)
+    })
 })
 
 Cypress.Commands.add("waitSignIn",(status) =>{
@@ -60,3 +78,4 @@ Cypress.Commands.add("waitSignIn",(status) =>{
     })
     
 })
+

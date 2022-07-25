@@ -22,7 +22,7 @@ context("Conduit -> New Article", ()=>{
         cy.sumbitArticle()
 
         cy.checkHref('https://demo.productionready.io/#/editor/')
-        cy.checkErrorMssg(/description can't be blank/)
+        cy.checkErrorMssg("description can't be blank")
     })
 
     it("Verify that you can't submit the article when the body is empty", ()=>{
@@ -31,6 +31,44 @@ context("Conduit -> New Article", ()=>{
         cy.sumbitArticle()
 
         cy.checkHref('https://demo.productionready.io/#/editor/')
-        cy.checkErrorMssg(/body can't be blank/)
+        cy.checkErrorMssg("body can't be blank")
     })
+
+    it("Add a new article with no tags",()=>{
+        const artical = {
+            title: genSentence(3),
+            description: genWord(15),
+            body: genWord(50)
+        }
+
+        cy.fillTitle(artical.title)
+        cy.fillDescription(artical.description)
+        cy.fillBody(artical.body)
+        cy.sumbitArticle()
+
+        cy.checkArticlContent(artical)
+        cy.checkHref(`https://demo.productionready.io/#/article/${artical.title.split(' ').join('-')}`)
+    })
+    
+    
 })
+
+
+function genWord(length) {
+    let chars = 'abcdefghijklmnopqrstuvwxyz1234567890';
+    let string = '';
+    for(let ii=0; ii<length; ii++){
+        string += chars[Math.floor(Math.random() * chars.length)];
+}
+    return string;
+}
+
+function genSentence(wordsCount)
+{
+    let str='';
+    for (let i=0;i<wordsCount;i++)
+    {
+        str += genWord(4)+" "
+    }
+    return str.trim();
+}
