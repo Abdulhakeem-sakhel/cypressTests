@@ -1,18 +1,19 @@
-context("Conduit -> New Article", ()=>{
+import {generateRandomSentence,generateRandomWord} from '../../support/genration';
+context("Conduit -> New Article", {baseUrl: 'https://demo.productionready.io'} ,()=>{
     beforeEach( ()=> {
-        cy.visit('https://demo.productionready.io/#/login')
+        cy.visit('/#/login')
         cy.fixture("my.json").then((userInfo) => {
             cy.signIn(userInfo)
             .waitSignIn(200)
         })
-        cy.visit("https://demo.productionready.io/#/editor/")
+        cy.visit("/#/editor/")
     })
     it("Verify that you can't submit the article when the title is empty", ()=> {
         cy.fillDescription('Description')
         cy.fillBody('Body')
         cy.sumbitArticle()
         
-        cy.checkHref('https://demo.productionready.io/#/editor/')
+        cy.checkHref('/#/editor/')
         cy.checkErrorMssg("title can't be blank")
     })
     
@@ -21,7 +22,7 @@ context("Conduit -> New Article", ()=>{
         cy.fillBody('body')
         cy.sumbitArticle()
 
-        cy.checkHref('https://demo.productionready.io/#/editor/')
+        cy.checkHref('/#/editor/')
         cy.checkErrorMssg("description can't be blank")
     })
 
@@ -30,15 +31,15 @@ context("Conduit -> New Article", ()=>{
         cy.fillDescription('Description')
         cy.sumbitArticle()
 
-        cy.checkHref('https://demo.productionready.io/#/editor/')
+        cy.checkHref('/#/editor/')
         cy.checkErrorMssg("body can't be blank")
     })
 
     it("Add a new article with no tags",()=>{
         const artical = {
-            title: genSentence(3),
-            description: genWord(15),
-            body: genWord(50)
+            title: generateRandomSentence(3),
+            description: generateRandomWord(15),
+            body: generateRandomWord(50)
         }
 
         cy.fillTitle(artical.title)
@@ -47,14 +48,14 @@ context("Conduit -> New Article", ()=>{
         cy.sumbitArticle()
 
         cy.checkArticlContent(artical)
-        cy.checkHref(`https://demo.productionready.io/#/article/${artical.title.split(' ').join('-')}`)
+        cy.checkHref(`/#/article/${artical.title.split(' ').join('-')}`)
     })
     
     it("Add a new article with tags",()=>{
         const artical = {
-            title: genSentence(3),
-            description: genWord(15),
-            body: genWord(50),
+            title: generateRandomSentence(3),
+            description: generateRandomWord(15),
+            body: generateRandomWord(50),
             tags: 'implementations'
         }
 
@@ -65,18 +66,18 @@ context("Conduit -> New Article", ()=>{
         cy.sumbitArticle()
 
         cy.checkArticlContent(artical)
-        cy.checkHref(`https://demo.productionready.io/#/article/${artical.title.split(' ').join('-')}`)
+        cy.checkHref(`/#/article/${artical.title.split(' ').join('-')}`)
     })
 
     it("Verify that you can't submit the article when the title is not unique", ()=> {
         cy.getTitleName()
         .then(text => {
             cy.fillTitle(text)
-            cy.fillDescription(genWord(5))
-            cy.fillBody(genWord(5))
+            cy.fillDescription(generateRandomWord(5))
+            cy.fillBody(generateRandomWord(5))
             cy.sumbitArticle()
 
-            cy.checkHref('https://demo.productionready.io/#/editor/')
+            cy.checkHref('/#/editor/')
             cy.checkErrorMssg("title must be unique")
         })
     })
@@ -85,12 +86,12 @@ context("Conduit -> New Article", ()=>{
 
 context('Conduit -> New Article priority 1',()=>{
     beforeEach(()=>{
-        cy.visit('https://demo.productionready.io/#/login')
+        cy.visit('/#/login')
         cy.fixture("my.json").then((userInfo) => {
             cy.signIn(userInfo)
             .waitSignIn(200)
         })
-        cy.visit("https://demo.productionready.io/#/editor/")
+        cy.visit("/#/editor/")
     })
     it("Verify that you can't submit the article when all fields are empty", ()=> {
         cy.sumbitArticle()
@@ -100,9 +101,9 @@ context('Conduit -> New Article priority 1',()=>{
     })
     it('Add a new article even with a very long title',()=>{
         const artical = {
-            title: genSentence(250),
-            description: genWord(15),
-            body: genWord(50),
+            title: generateRandomSentence(250),
+            description: generateRandomWord(15),
+            body: generateRandomWord(50),
             tags: 'implementations'
         }
 
@@ -113,26 +114,6 @@ context('Conduit -> New Article priority 1',()=>{
         cy.sumbitArticle()
 
         cy.checkArticlContent(artical)
-        cy.checkHref(`https://demo.productionready.io/#/article/${artical.title.split(' ').join('-')}`)
+        cy.checkHref(`/#/article/${artical.title.split(' ').join('-')}`)
     })
 })
-
-
-function genWord(length) {
-    let chars = 'abcdefghijklmnopqrstuvwxyz1234567890';
-    let string = '';
-    for(let ii=0; ii<length; ii++){
-        string += chars[Math.floor(Math.random() * chars.length)];
-}
-    return string;
-}
-
-function genSentence(wordsCount)
-{
-    let str='';
-    for (let i=0;i<wordsCount;i++)
-    {
-        str += genWord(4)+" "
-    }
-    return str.trim();
-}

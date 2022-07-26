@@ -1,19 +1,19 @@
 Cypress.Commands.add('fillTitle',(title)=>{
     cy.get('[ng-model="$ctrl.article.title"]')
-    .clear()
-    .type(title)
+      .clear()
+      .type(title)
 })
 
 Cypress.Commands.add('fillDescription',(description) => {
     cy.get('[ng-model="$ctrl.article.description"]')
-    .clear()
-    .type(description)
+      .clear()
+      .type(description)
 })
 
 Cypress.Commands.add('fillBody',(body)=>{
     cy.get('[ng-model="$ctrl.article.body"]')
-    .clear()
-    .type(body)
+      .clear()
+      .type(body)
 })
 
 Cypress.Commands.add('fillTags',(tags) =>{
@@ -64,14 +64,14 @@ Cypress.Commands.add('checkArticlContent',(articalInfo) => {
 
 Cypress.Commands.add("getTitleName", ()=> {
     cy.fixture('my.json').then(userInfo => {
-        cy.visit(`https://demo.productionready.io/#/@${userInfo.name}`)
+        cy.visit(`/#/@${userInfo.name}`)
     })
     cy.intercept({method: "GET",pathname: "/api/articles"}).as('author')
     cy.wait('@author').then(http => {
     })
     cy.get('[ng-bind="$ctrl.article.title"]').first()
     .then($elm =>{ 
-        cy.visit('https://demo.productionready.io/#/editor/')
+        cy.visit('/#/editor/')
         .then(() => $elm.text())
     })
 })
