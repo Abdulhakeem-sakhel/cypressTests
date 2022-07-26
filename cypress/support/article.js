@@ -1,30 +1,59 @@
+const locaters = {
+    articleTitleField: '[ng-model="$ctrl.article.title"]',
+    articleDescriptionField: '[ng-model="$ctrl.article.description"]',
+    articleBodyField: '[ng-model="$ctrl.article.body"]',
+    articleTagsField: '[ng-model="$ctrl.tagField"]',
+    articleSumbitButton: '[ng-click="$ctrl.submit()"]',
+    errorMessage: '[ng-repeat="error in errors"]',
+    articleTitleContent: '[ng-bind="::$ctrl.article.title"]',
+    articleBodyContent: '[ng-bind-html="::$ctrl.article.body"]',
+    articalAuthorName: '[ng-bind="$ctrl.article.author.username"]',
+    articalSumbitedTitle: '[ng-bind="$ctrl.article.title"]'
+}
+
 Cypress.Commands.add('fillTitle',(title)=>{
-    cy.get('[ng-model="$ctrl.article.title"]')
+    cy.get(locaters.articleTitleField)
       .clear()
       .type(title)
 })
 
 Cypress.Commands.add('fillDescription',(description) => {
-    cy.get('[ng-model="$ctrl.article.description"]')
+    cy.get(locaters.articleDescriptionField)
       .clear()
       .type(description)
 })
 
 Cypress.Commands.add('fillBody',(body)=>{
-    cy.get('[ng-model="$ctrl.article.body"]')
+    cy.get(locaters.articleBodyField)
       .clear()
       .type(body)
 })
 
 Cypress.Commands.add('fillTags',(tags) =>{
-    cy.get('[ng-model="$ctrl.tagField"]')
+    cy.get(locaters.articleTagsField)
     .clear()
     .type(tags)
 })
 
+Cypress.Commands.add('fillAllFields',(articalInfo)=> {
+    if(articalInfo.title !== undefined){
+        cy.fillTitle(articalInfo.title)
+    }
+    if(articalInfo.description !== undefined){
+        cy.fillDescription(articalInfo.description)
+    }
+    if(articalInfo.body !== undefined){
+        cy.fillBody(articalInfo.body)
+    }
+    if(articalInfo.tags !== undefined){
+        cy.fillTags(articalInfo.tags)
+    }
+    
+})
+
 Cypress.Commands.add('sumbitArticle',()=>{
-    cy.get('[ng-click="$ctrl.submit()"]')
-    .click()
+    cy.get(locaters.articleSumbitButton)
+      .click()
 })
 
 Cypress.Commands.add('checkHref',(href)=> {
@@ -36,7 +65,7 @@ Cypress.Commands.add('checkHref',(href)=> {
 
 Cypress.Commands.add('checkErrorMssg',(error)=>{
     error = new RegExp(error,"ig")
-    cy.get('[ng-repeat="error in errors"]')
+    cy.get(locaters.errorMessage)
     .then($elm=>{
         expect($elm).to.be.visible
         cy.log($elm.text())
@@ -46,33 +75,33 @@ Cypress.Commands.add('checkErrorMssg',(error)=>{
 })
 
 Cypress.Commands.add('checkArticlContent',(articalInfo) => {
-    cy.get('[ng-bind="::$ctrl.article.title"]')
-    .then($elm =>{
+    cy.get(locaters.articleTitleContent)
+      .then($elm =>{
         expect($elm.text()).match(new RegExp(articalInfo.title))
     })
 
-    cy.get('[ng-bind-html="::$ctrl.article.body"]')
+    cy.get(locaters.articleBodyContent)
     .then($elm =>{
         expect($elm.text()).match(new RegExp(articalInfo.body))
     })
 
-    cy.fixture("my.json").then((userInfo)=>{
+    cy.fixture("userLogin.json").then((userInfo)=>{
         cy.get('[ng-bind="$ctrl.article.author.username"]').first()
-        .should('have.text',userInfo.name)
+          .should('have.text',userInfo.name)
     })
 })
 
 Cypress.Commands.add("getTitleName", ()=> {
-    cy.fixture('my.json').then(userInfo => {
+    cy.fixture('userLogin.json').then(userInfo => {
         cy.visit(`/#/@${userInfo.name}`)
     })
     cy.intercept({method: "GET",pathname: "/api/articles"}).as('author')
     cy.wait('@author').then(http => {
     })
-    cy.get('[ng-bind="$ctrl.article.title"]').first()
-    .then($elm =>{ 
+    cy.get(locaters.articalSumbitedTitle).first()
+      .then($elm =>{ 
         cy.visit('/#/editor/')
-        .then(() => $elm.text())
+          .then(() => $elm.text())
     })
 })
 
