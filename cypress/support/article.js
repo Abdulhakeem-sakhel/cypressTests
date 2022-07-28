@@ -1,59 +1,42 @@
-const locaters = {
-    articleTitleField: '[ng-model="$ctrl.article.title"]',
-    articleDescriptionField: '[ng-model="$ctrl.article.description"]',
-    articleBodyField: '[ng-model="$ctrl.article.body"]',
-    articleTagsField: '[ng-model="$ctrl.tagField"]',
-    articleSumbitButton: '[ng-click="$ctrl.submit()"]',
+const LOCATERS = {
+    titleField: '[ng-model="$ctrl.article.title"]',
+    descriptionField: '[ng-model="$ctrl.article.description"]',
+    bodyField: '[ng-model="$ctrl.article.body"]',
+    tagsField: '[ng-model="$ctrl.tagField"]',
+    sumbitButton: '[ng-click="$ctrl.submit()"]',
     errorMessage: '[ng-repeat="error in errors"]',
-    articleTitleContent: '[ng-bind="::$ctrl.article.title"]',
-    articleBodyContent: '[ng-bind-html="::$ctrl.article.body"]',
-    articalAuthorName: '[ng-bind="$ctrl.article.author.username"]',
-    articalSumbitedTitle: '[ng-bind="$ctrl.article.title"]'
+    titleContent: '[ng-bind="::$ctrl.article.title"]',
+    bodyContent: '[ng-bind-html="::$ctrl.article.body"]',
+    authorName: '[ng-bind="$ctrl.article.author.username"]',
+    sumbitedTitle: '[ng-bind="$ctrl.article.title"]'
 }
 
-Cypress.Commands.add('fillTitle',(title)=>{
-    cy.get(locaters.articleTitleField)
+Cypress.Commands.add('fillFeild',(locater,text)=>{
+    cy.get(locater)
       .clear()
-      .type(title)
-})
-
-Cypress.Commands.add('fillDescription',(description) => {
-    cy.get(locaters.articleDescriptionField)
-      .clear()
-      .type(description)
-})
-
-Cypress.Commands.add('fillBody',(body)=>{
-    cy.get(locaters.articleBodyField)
-      .clear()
-      .type(body)
-})
-
-Cypress.Commands.add('fillTags',(tags) =>{
-    cy.get(locaters.articleTagsField)
-    .clear()
-    .type(tags)
+      .type(text)
 })
 
 Cypress.Commands.add('fillAllFields',(articalInfo)=> {
-    if(articalInfo.title !== undefined){
-        cy.fillTitle(articalInfo.title)
+    if(articalInfo.title){
+        cy.fillFeild(LOCATERS.titleField,articalInfo.title)
     }
-    if(articalInfo.description !== undefined){
-        cy.fillDescription(articalInfo.description)
+    if(articalInfo.description){
+        cy.fillFeild(LOCATERS.descriptionField,articalInfo.description)
     }
-    if(articalInfo.body !== undefined){
-        cy.fillBody(articalInfo.body)
+    if(articalInfo.body){
+        cy.fillFeild(LOCATERS.bodyField,articalInfo.body)
     }
     if(articalInfo.tags !== undefined){
-        cy.fillTags(articalInfo.tags)
+        cy.fillFeild(LOCATERS.tagsField,articalInfo.tags.join(" "))
+    }
+    cy.get(LOCATERS.sumbitButton)
+      .click()
+    
+    if(articalInfo.errorMessage){
+        cy.checkErrorMssg(articalInfo.errorMessage)
     }
     
-})
-
-Cypress.Commands.add('sumbitArticle',()=>{
-    cy.get(locaters.articleSumbitButton)
-      .click()
 })
 
 Cypress.Commands.add('checkHref',(href)=> {
@@ -65,8 +48,8 @@ Cypress.Commands.add('checkHref',(href)=> {
 
 Cypress.Commands.add('checkErrorMssg',(error)=>{
     error = new RegExp(error,"ig")
-    cy.get(locaters.errorMessage)
-    .then($elm=>{
+    cy.get(LOCATERS.errorMessage)
+      .then($elm=>{
         expect($elm).to.be.visible
         cy.log($elm.text())
         expect($elm.text()).match(error)
@@ -75,42 +58,42 @@ Cypress.Commands.add('checkErrorMssg',(error)=>{
 })
 
 Cypress.Commands.add('checkArticlContent',(articalInfo) => {
-    cy.get(locaters.articleTitleContent)
+    cy.get(LOCATERS.titleContent)
       .then($elm =>{
         expect($elm.text()).match(new RegExp(articalInfo.title))
     })
 
-    cy.get(locaters.articleBodyContent)
-    .then($elm =>{
+    cy.get(LOCATERS.bodyContent)
+      .then($elm =>{
         expect($elm.text()).match(new RegExp(articalInfo.body))
     })
 
-    cy.fixture("userLogin.json").then((userInfo)=>{
-        cy.get('[ng-bind="$ctrl.article.author.username"]').first()
-          .should('have.text',userInfo.name)
-    })
+ 
+    cy.get('[ng-bind="$ctrl.article.author.username"]').first()
+        .should('have.text',Cypress.env('name'))
 })
 
-Cypress.Commands.add("getTitleName", ()=> {
-    cy.fixture('userLogin.json').then(userInfo => {
-        cy.visit(`/#/@${userInfo.name}`)
+Cypress.Commands.add('signIn',()=>{
+    cy.get('[ng-model="$ctrl.formData.email"]')
+    .clear()
+    .type(Cypress.env('email'))
+
+    cy.get('[ng-model="$ctrl.formData.password"]')
+    .clear()
+    .type(Cypress.env('password'))
+
+    //cy.get('[ng-bind="$ctrl.title"] > [type="submit"]')
+    cy.get('[ng-bind="$ctrl.title"]').eq(1)
+    .click()
     })
-    cy.intercept({method: "GET",pathname: "/api/articles"}).as('author')
-    cy.wait('@author').then(http => {
-    })
-    cy.get(locaters.articalSumbitedTitle).first()
-      .then($elm =>{ 
-        cy.visit('/#/editor/')
-          .then(() => $elm.text())
-    })
-})
+
 
 Cypress.Commands.add("waitSignIn",(status) =>{
     cy.intercept({
         pathname: '/api/users/login',
         method: 'POST'
     })
-    .as('signInHttp')
+      .as('signInHttp')
 
     cy.wait('@signInHttp').its('response.statusCode').then(statusCode=>{
         if(statusCode === status)
@@ -127,4 +110,3 @@ Cypress.Commands.add("waitSignIn",(status) =>{
     })
     
 })
-
