@@ -8,87 +8,87 @@ context("Conduit -> New Article" ,()=>{
     })
     it("Verify that you can't submit the article when the title is empty", ()=> {
         let articalInfo = {
-            description: "iam bored",
-            body: "I have no idea",
+            inputFieldDescription: "iam bored",
+            inputFieldBody: "I have no idea",
             errorMessage: "title can't be blank"
         }
-        cy.fillAllFields(articalInfo)
+        cy.sumbitArtical(articalInfo)
         cy.checkHref('/#/editor/')
     })
     
     it("Verify that you can't submit the article when the description is empty", ()=>{
         let articalInfo = {
-            title: "the mysteries of the world",
-            body: "I have no idea",
+            inputFieldTitle: "the mysteries of the world",
+            inputFieldBody: "I have no idea",
             errorMessage: "description can't be blank"
         }
-        cy.fillAllFields(articalInfo)
+        cy.sumbitArtical(articalInfo)
         cy.checkHref('/#/editor/')
     })
 
     it("Verify that you can't submit the article when the body is empty", ()=>{
         let articalInfo = {
-            title: "the mysteries of the world",
-            description: "iam bored",
+            inputFieldTitle: "the mysteries of the world",
+            inputFieldDescription: "iam bored",
             errorMessage: "body can't be blank"
         }
-        cy.fillAllFields(articalInfo)
+        cy.sumbitArtical(articalInfo)
         cy.checkHref('/#/editor/')
     })
 
     it("Add a new article with no tags",()=>{
         let articalInfo = {
-            title: generateRandomSentence(3),
-            description: generateRandomWord(15),
-            body: generateRandomWord(50),
+            inputFieldTitle: generateRandomSentence(3),
+            inputFieldDescription: generateRandomWord(15),
+            inputFieldBody: generateRandomWord(50),
         }
-        cy.fillAllFields(articalInfo)
+        cy.sumbitArtical(articalInfo)
         cy.wait(1000).checkArticlContent(articalInfo)
-        cy.checkHref(`/#/article/${articalInfo.title.split(' ').join('-')}`)
+        cy.checkHref(`/#/article/${articalInfo.inputFieldTitle.split(' ').join('-')}`)
     })
     
     it("Add a new article with tags",()=>{
         let articalInfo = {
-            title: generateRandomSentence(3),
-            description: generateRandomWord(15),
-            body: generateRandomWord(50),
-            tags: ['implementations', 'codebaseShow']
+            inputFieldTitle: generateRandomSentence(3),
+            inputFieldDescription: generateRandomWord(15),
+            inputFieldBody: generateRandomWord(50),
+            inputFieldTags: ['implementations', 'codebaseShow']
         }
-        cy.fillAllFields(articalInfo)
+        cy.sumbitArtical(articalInfo)
         cy.wait(1000).checkArticlContent(articalInfo)
-        cy.checkHref(`/#/article/${articalInfo.title.split(' ').join('-')}`)
+        cy.checkHref(`/#/article/${articalInfo.inputFieldTitle.split(' ').join('-')}`)
     })
 
     it("Verify that you can't submit the article when the title is not unique", ()=> { 
         let articalInfo = {
-            title: "the mysteries of the world",
-            description: "iam bored",
-            body: "I have no idea",
+            inputFieldTitle: "the mysteries of the world",
+            inputFieldDescription: "iam bored",
+            inputFieldBody: "I have no idea",
+            errorMessage: "title must be unique"
         }
-        cy.fillAllFields(articalInfo)
+        cy.sumbitArtical(articalInfo)
         cy.checkHref('/#/editor/')
-        cy.checkErrorMssg("title must be unique")    
     })
 
     it("Verify that you can't submit the article when all fields are empty", ()=> {
         let articalInfo = {
             errorMessage : "title can't be blank",
         }
-        cy.fillAllFields(articalInfo)
+        cy.sumbitArtical(articalInfo)
         cy.checkHref('/#/editor/')
     })
     it('Add a new article even with a very long title',()=>{
         Cypress.Keyboard.defaults({keystrokeDelay: 0,})
-        const articalInfo = {
-            title: generateRandomSentence(100),
-            description: generateRandomWord(15),
-            body: generateRandomWord(50),
-            tags: ['implementations', 'codebaseShow']
+        let articalInfo = {
+            inputFieldTitle: generateRandomSentence(100),
+            inputFieldDescription: generateRandomWord(15),
+            inputFieldBody: generateRandomWord(50),
+            inputFieldTags:['codebaseShow']
         }
-        cy.fillAllFields(articalInfo)
+        cy.sumbitArtical(articalInfo)
         
         cy.wait(1000).checkArticlContent(articalInfo)
-        cy.checkHref(`/#/article/${articalInfo.title.split(' ').join('-')}`)
+        cy.checkHref(`/#/article/${articalInfo.inputFieldTitle.split(' ').join('-')}`)
     })
     
 })
