@@ -8,7 +8,10 @@ const LOCATERS = {
     titleContent: '[ng-bind="::$ctrl.article.title"]',
     bodyContent: '[ng-bind-html="::$ctrl.article.body"]',
     authorName: '[ng-bind="$ctrl.article.author.username"]',
-    sumbitedTitle: '[ng-bind="$ctrl.article.title"]'
+    sumbitedTitle: '[ng-bind="$ctrl.article.title"]',
+    emailField: '[ng-model="$ctrl.formData.email"]',
+    passwordField: '[ng-model="$ctrl.formData.password"]',
+    signInButton: '.btn[ng-bind="$ctrl.title"]'
 }
 
 Cypress.Commands.add('fillFeild',(locater,text)=>{
@@ -17,18 +20,23 @@ Cypress.Commands.add('fillFeild',(locater,text)=>{
       .type(text)
 })
 
-Cypress.Commands.add('fillAllFields',(articalInfo)=> {
-    if(articalInfo.title){
-        cy.fillFeild(LOCATERS.titleField,articalInfo.title)
+Cypress.Commands.add('sumbitArtical',(articalInfo)=> {
+    if(articalInfo.inputFieldTitle){
+        cy.fillFeild(LOCATERS.titleField,articalInfo.inputFieldTitle)
     }
-    if(articalInfo.description){
-        cy.fillFeild(LOCATERS.descriptionField,articalInfo.description)
+    if(articalInfo.inputFieldDescription){
+        cy.fillFeild(LOCATERS.descriptionField,articalInfo.inputFieldDescription)
     }
-    if(articalInfo.body){
-        cy.fillFeild(LOCATERS.bodyField,articalInfo.body)
+    if(articalInfo.inputFieldBody){
+        cy.fillFeild(LOCATERS.bodyField,articalInfo.inputFieldBody)
     }
-    if(articalInfo.tags !== undefined){
-        cy.fillFeild(LOCATERS.tagsField,articalInfo.tags.join(" "))
+    if(articalInfo.inputFieldTags){
+        if(articalInfo.inputFieldTags instanceof Object){
+            cy.fillFeild(LOCATERS.tagsField,articalInfo.inputFieldTags.join(" "))
+        }
+        else{
+            cy.fillFeild(LOCATERS.tagsField,articalInfo.inputFieldTags);
+        }
     }
     cy.get(LOCATERS.sumbitButton)
       .click()
@@ -74,16 +82,15 @@ Cypress.Commands.add('checkArticlContent',(articalInfo) => {
 })
 
 Cypress.Commands.add('signIn',()=>{
-    cy.get('[ng-model="$ctrl.formData.email"]')
+    cy.get(LOCATERS.emailField)
     .clear()
     .type(Cypress.env('email'))
 
-    cy.get('[ng-model="$ctrl.formData.password"]')
+    cy.get(LOCATERS.passwordField)
     .clear()
     .type(Cypress.env('password'))
 
-    //cy.get('[ng-bind="$ctrl.title"] > [type="submit"]')
-    cy.get('[ng-bind="$ctrl.title"]').eq(1)
+    cy.get(LOCATERS.signInButton)
     .click()
     })
 
