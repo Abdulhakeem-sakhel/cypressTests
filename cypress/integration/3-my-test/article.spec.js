@@ -79,7 +79,7 @@ context("Conduit -> New Article" ,()=>{
     })
     it('Add a new article even with a very long title',()=>{
         Cypress.Keyboard.defaults({keystrokeDelay: 0,})
-        let articalInfo = {
+        const articalInfo = {
             inputFieldTitle: generateRandomSentence(100),
             inputFieldDescription: generateRandomWord(15),
             inputFieldBody: generateRandomWord(50),
