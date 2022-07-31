@@ -14,7 +14,7 @@ const LOCATERS = {
     signInButton: '.btn[ng-bind="$ctrl.title"]'
 }
 
-Cypress.Commands.add('fillFeild',(locater,text)=>{
+Cypress.Commands.add('fillField',(locater,text)=>{
     cy.get(locater)
       .clear()
       .type(text)
@@ -22,20 +22,20 @@ Cypress.Commands.add('fillFeild',(locater,text)=>{
 
 Cypress.Commands.add('sumbitArtical',(articalInfo)=> {
     if(articalInfo.inputFieldTitle){
-        cy.fillFeild(LOCATERS.titleField,articalInfo.inputFieldTitle)
+        cy.fillField(LOCATERS.titleField,articalInfo.inputFieldTitle)
     }
     if(articalInfo.inputFieldDescription){
-        cy.fillFeild(LOCATERS.descriptionField,articalInfo.inputFieldDescription)
+        cy.fillField(LOCATERS.descriptionField,articalInfo.inputFieldDescription)
     }
     if(articalInfo.inputFieldBody){
-        cy.fillFeild(LOCATERS.bodyField,articalInfo.inputFieldBody)
+        cy.fillField(LOCATERS.bodyField,articalInfo.inputFieldBody)
     }
     if(articalInfo.inputFieldTags){
         if(articalInfo.inputFieldTags instanceof Object){
-            cy.fillFeild(LOCATERS.tagsField,articalInfo.inputFieldTags.join(" "))
+            cy.fillField(LOCATERS.tagsField,articalInfo.inputFieldTags.join(" "))
         }
         else{
-            cy.fillFeild(LOCATERS.tagsField,articalInfo.inputFieldTags);
+            cy.fillField(LOCATERS.tagsField,articalInfo.inputFieldTags);
         }
     }
     cy.get(LOCATERS.sumbitButton)
@@ -82,8 +82,8 @@ Cypress.Commands.add('checkArticlContent',(articalInfo) => {
 })
 
 Cypress.Commands.add('signIn',()=>{
-    cy.fillFeild(LOCATERS.emailField,Cypress.env('email'))
-    cy.fillFeild(LOCATERS.passwordField,Cypress.env('password'))
+    cy.fillField(LOCATERS.emailField,Cypress.env('email'))
+    cy.fillField(LOCATERS.passwordField,Cypress.env('password'))
     cy.get(LOCATERS.signInButton)
       .click()
     })
