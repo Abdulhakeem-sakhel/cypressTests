@@ -1,5 +1,6 @@
 {
     "baseUrl": "https://demo.productionready.io",
+    "videoCompression": 15,
     "env": {
         "name": "abod",
         "email": "abodsakhel1071@gmail.com",
